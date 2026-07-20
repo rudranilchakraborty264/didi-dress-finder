@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Didi's Dress Finder 👗✨</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: #0f172a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 10px;
+    }
+
+    /* Mobile Device Frame */
+    .mobile-frame {
+      width: 100%;
+      max-width: 410px;
+      height: 780px;
+      background: #1e293b;
+      border-radius: 36px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 10px #334155;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      color: #f8fafc;
+    }
+
+    /* App Header */
+    .app-header {
+      background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+      padding: 24px 20px 18px 20px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(236, 72, 153, 0.3);
+    }
+
+    .app-header h1 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .app-header p {
+      font-size: 0.8rem;
+      opacity: 0.9;
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* Tab Controls */
+    .tab-bar {
+      display: flex;
+      background: #0f172a;
+      padding: 6px;
+      margin: 12px 16px;
+      border-radius: 16px;
+      gap: 6px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 14px;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-weight: 700;
+      font-size: 0.82rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, #ec4899, #8b5cf6);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+    }
+
+    /* Main Scrollable Area */
+    .content-area {
+      flex: 1;
+      padding: 0 16px 20px 16px;
+      overflow-y: auto;
+    }
+
+    /* Tab Sections */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Image Upload Box */
+    .upload-card {
+      border: 2px dashed #475569;
+      background: #0f172a;
+      border-radius: 20px;
+      padding: 24px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-card:hover, .upload-card.dragover {
+      border-color: #ec4899;
+      background: rgba(236, 72, 153, 0.05);
+    }
+
+    .upload-icon {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .upload-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #f1f5f9;
+    }
+
+    .upload-subtitle {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+
+    #imageInput {
+      display: none;
+    }
+
+    .preview-container {
+      display: none;
+      margin-top: 14px;
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      max-height: 220px;
+    }
+
+    .preview-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 16px;
+    }
+
+    /* Scanner Animation Line */
+    .scan-line {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: #ec4899;
+      box-shadow: 0 0 15px #ec4899, 0 0 25px #ec4899;
+      animation: scan 2s infinite ease-in-out;
+    }
+
+    @keyframes scan {
+      0% { top: 0%; }
+      50% { top: 95%; }
+      100% { top: 0%; }
+    }
+
+    /* Video Input Box */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .text-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: #0f172a;
+      border: 1.5px solid #334155;
+      border-radius: 14px;
+      color: #f8fafc;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .text-input:focus {
+      border-color: #ec4899;
+    }
+
+    .action-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      background: linear-gradient(135deg, #ec4899, #8b5cf6);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(236, 72, 153, 0.4);
+      transition: transform 0.1s;
+    }
+
+    .action-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Results Header */
+    .results-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #cbd5e1;
+      margin: 20px 0 10px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Cards List */
+    .results-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .result-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 12px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .result-card:hover {
+      border-color: #ec4899;
+      transform: translateY(-2px);
+    }
+
+    .card-thumb {
+      width: 65px;
+      height: 75px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: #1e293b;
+      flex-shrink: 0;
+    }
+
+    .card-details {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .card-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #f8fafc;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-store {
+      font-size: 0.75rem;
+      color: #ec4899;
+      font-weight: 600;
+      margin-top: 3px;
+    }
+
+    .card-price {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #10b981;
+      margin-top: 4px;
+    }
+
+    .badge {
+      font-size: 0.65rem;
+      background: rgba(139, 92, 246, 0.2);
+      color: #a78bfa;
+      padding: 3px 8px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-top: 5px;
+      font-weight: 600;
+    }
+
+    .buy-btn {
+      background: #334155;
+      color: #f8fafc;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: none;
+      flex-shrink: 0;
+    }
+
+    .loader {
+      text-align: center;
+      padding: 20px;
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #64748b;
+      font-size: 0.8rem;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mobile-frame">
+    <!-- Header -->
+    <div class="app-header">
+      <h1><span>👗</span> Didi's Dress Finder</h1>
+      <p>Scan photo or paste video link to find exact dress!</p>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('imageTab')">📸 Photo Scan</button>
+      <button class="tab-btn" onclick="switchTab('videoTab')">🎥 Video Link</button>
+    </div>
+
+    <!-- Scrollable Content -->
+    <div class="content-area">
+      
+      <!-- TAB 1: Image Scan -->
+      <div id="imageTab" class="tab-content active">
+        <div class="upload-card" onclick="document.getElementById('imageInput').click()">
+          <span class="upload-icon">✨👗</span>
+          <div class="upload-title">Upload or Take Photo of Dress</div>
+          <div class="upload-subtitle">PNG, JPG, JPEG supported</div>
+          <input type="file" id="imageInput" accept="image/*" onchange="handleImageSelect(event)">
+        </div>
+
+        <div id="previewContainer" class="preview-container">
+          <img id="previewImg" class="preview-img" src="" alt="Dress Preview">
+          <div id="scanLine" class="scan-line"></div>
+        </div>
+
+        <button id="scanImgBtn" class="action-btn" style="margin-top: 14px; display: none;" onclick="scanImage()">
+          🔍 Scan Dress & Find Buy Links
+        </button>
+      </div>
+
+      <!-- TAB 2: Video Link -->
+      <div id="videoTab" class="tab-content">
+        <div class="input-group">
+          <input type="text" id="videoUrlInput" class="text-input" placeholder="Paste YouTube / Reel / Video URL here...">
+          <button class="action-btn" onclick="scanVideo()">🔎 Extract Links from Video</button>
+        </div>
+      </div>
+
+      <!-- Results Area -->
+      <div class="results-title">
+        <span>Found Buying Links</span>
+        <span id="resultCount" style="font-size: 0.75rem; color: #ec4899;"></span>
+      </div>
+
+      <div id="resultsList" class="results-list">
+        <div class="empty-state">
+          Dress ka photo upload karo ya video link paste karke scan button dabao! ✨
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
+    function handleImageSelect(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('previewImg').src = e.target.result;
+          document.getElementById('previewContainer').style.display = 'block';
+          document.getElementById('scanImgBtn').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    async function scanImage() {
+      const fileInput = document.getElementById('imageInput');
+      const scanLine = document.getElementById('scanLine');
+      const resultsList = document.getElementById('resultsList');
+
+      if (!fileInput.files[0]) return;
+
+      scanLine.style.display = 'block';
+      resultsList.innerHTML = '<div class="loader">Scanning dress across internet (Myntra, Zara, Ajio, Amazon)... 🔎</div>';
+
+      const formData = new FormData();
+      formData.append('image', fileInput.files[0]);
+
+      try {
+        const response = await fetch('/api/scan-image', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+        scanLine.style.display = 'none';
+
+        if (data.results && data.results.length > 0) {
+          renderResults(data.results);
+        } else {
+          resultsList.innerHTML = '<div class="empty-state">Koi exact link nahi mila. Dusri photo try karo.</div>';
+        }
+      } catch (err) {
+        scanLine.style.display = 'none';
+        resultsList.innerHTML = '<div class="empty-state" style="color:#ef4444;">Server Error! Make sure Python Flask server is running.</div>';
+      }
+    }
+
+    async function scanVideo() {
+      const url = document.getElementById('videoUrlInput').value.trim();
+      const resultsList = document.getElementById('resultsList');
+
+      if (!url) {
+        alert("Pehle video ka link paste karo!");
+        return;
+      }
+
+      resultsList.innerHTML = '<div class="loader">Reading video description, comments & links... 🎥</div>';
+
+      try {
+        const response = await fetch('/api/scan-video', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: url })
+        });
+        const data = await response.json();
+
+        if (data.results && data.results.length > 0) {
+          renderResults(data.results);
+        } else {
+          resultsList.innerHTML = '<div class="empty-state">Is video description/comments me dress ka link nahi mila.</div>';
+        }
+      } catch (err) {
+        resultsList.innerHTML = '<div class="empty-state" style="color:#ef4444;">Server Error! Make sure Python Flask server is running.</div>';
+      }
+    }
+
+    function renderResults(items) {
+      const resultsList = document.getElementById('resultsList');
+      document.getElementById('resultCount').innerText = `${items.length} items found`;
+      resultsList.innerHTML = '';
+
+      items.forEach(item => {
+        const imgUrl = item.image || 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=200&q=80';
+        const card = document.createElement('a');
+        card.className = 'result-card';
+        card.href = item.url;
+        card.target = '_blank';
+
+        card.innerHTML = `
+          <img src="${imgUrl}" class="card-thumb" alt="Dress">
+          <div class="card-details">
+            <div class="card-title">${item.title}</div>
+            <div class="card-store">🛍️ ${item.store}</div>
+            ${item.price ? `<div class="card-price">${item.price}</div>` : ''}
+            <span class="badge">${item.confidence || item.source}</span>
+          </div>
+          <button class="buy-btn">BUY ➔</button>
+        `;
+
+        resultsList.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>
